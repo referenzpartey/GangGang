@@ -1,4 +1,3 @@
-
 let map;
 let chatEnabled = false;
 const users = { partey: "abxy1289" };

@@ -1,4 +1,3 @@
-
 const CACHE_NAME = 'location-app-cache-v1';
 const urlsToCache = [
     '/',
@@ -6,7 +5,9 @@ const urlsToCache = [
     '/app.js',
     '/manifest.json',
     '/icon-192x192.png',
-    '/icon-512x512.png'
+    '/icon-512x512.png',
+    'https://unpkg.com/leaflet@1.9.3/dist/leaflet.css',
+    'https://unpkg.com/leaflet@1.9.3/dist/leaflet.js'
 ];
 
 self.addEventListener('install', event => {
