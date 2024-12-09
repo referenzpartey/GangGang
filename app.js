@@ -9,41 +9,44 @@ let pendingRegistrations = [];
 const onlineUsers = {};
 
 // User Authentication
-function authenticate(username, password) {
-    return users[username] === password;
+function handleLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    if (users[username] === password) {
+        alert("Login successful");
+        initMap(username);
+    } else {
+        alert("Invalid username or password");
+    }
 }
 
-// Registration Request
-function requestRegistration(username, password) {
-    if (username.length > 10 || password.length > 20) {
-        alert("Username or password is too long.");
+// Show Registration Form
+function showRegistration() {
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('register').style.display = 'block';
+}
+
+// Submit Registration Request
+function submitRegistration() {
+    const newUsername = document.getElementById('newUsername').value;
+    const newPassword = document.getElementById('newPassword').value;
+    if (newUsername.length > 10 || newPassword.length > 20) {
+        alert("Username or password exceeds maximum length.");
         return;
     }
-    pendingRegistrations.push({ username, password });
-    alert("Registration request sent.");
-    notifyPeers("registration", { username, password });
+    alert(`Registration requested for ${newUsername}`);
+    document.getElementById('register').style.display = 'none';
+    document.getElementById('auth').style.display = 'block';
 }
 
-// Approve or Deny Registration
-function handleRegistrationRequest(request) {
-    const { username } = request;
-    const userAction = confirm(`New registration: ${username}\n\nApprove or Deny?`);
-    if (userAction) {
-        users[username] = request.password;
-        alert(`${username} added.`);
-        updateUserFile();
-    } else {
-        alert(`${username} denied.`);
-    }
-}
-
-// Update User File
-function updateUserFile() {
-    notifyPeers("updateUsers", users);
+// Cancel Registration
+function cancelRegistration() {
+    document.getElementById('register').style.display = 'none';
+    document.getElementById('auth').style.display = 'block';
 }
 
 // Initialize Map
-function initMap() {
+function initMap(username) {
     document.getElementById('auth').style.display = 'none';
     document.getElementById('map-container').style.display = 'block';
 
@@ -61,32 +64,35 @@ function startLocationUpdates() {
     if (navigator.geolocation) {
         navigator.geolocation.watchPosition((position) => {
             const { latitude, longitude } = position.coords;
-            notifyPeers("locationUpdate", { username: "currentUser", lat: latitude, lng: longitude });
+            console.log(`Current location: ${latitude}, ${longitude}`);
         });
     } else {
         alert("Geolocation not supported.");
     }
 }
 
-// Handle Peer Messages
-function handlePeerMessage(type, data) {
-    if (type === "registration") {
-        handleRegistrationRequest(data);
-    } else if (type === "locationUpdate") {
-        updatePeerLocation(data);
-    }
+// Show Info Screen
+function showInfoScreen() {
+    document.getElementById('map-container').style.display = 'none';
+    document.getElementById('infoScreen').style.display = 'block';
 }
 
-// Update Peer Location on Map
-function updatePeerLocation({ username, lat, lng }) {
-    if (!onlineUsers[username]) {
-        onlineUsers[username] = L.marker([lat, lng]).addTo(map).bindPopup(username);
-    } else {
-        onlineUsers[username].setLatLng([lat, lng]);
-    }
+// Show Map
+function showMap() {
+    document.getElementById('infoScreen').style.display = 'none';
+    document.getElementById('map-container').style.display = 'block';
 }
 
-// Communication with Peers (WebRTC Placeholder)
-function notifyPeers(type, data) {
-    console.log(`Notify peers: ${type}`, data);
+// Add to Home Screen Placeholder
+function addToHomeScreen() {
+    alert("Feature to add to home screen coming soon.");
+}
+
+// Chat Functions Placeholder
+function sendChatMessage() {
+    alert("Chat message sent.");
+}
+
+function endChat() {
+    alert("Chat ended.");
 }

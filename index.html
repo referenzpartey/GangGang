@@ -33,32 +33,32 @@
         <h1>Gang Gang und Alles was die Ander'n sagen</h1>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
-        <button id="login">Login</button>
-        <button id="registerButton">Register</button>
+        <button id="login" onclick="handleLogin()">Login</button>
+        <button id="registerButton" onclick="showRegistration()">Register</button>
     </div>
     <div id="register" class="container" style="display:none;">
         <h2>Register</h2>
         <input type="text" id="newUsername" placeholder="New Username (max 10 chars)">
         <input type="password" id="newPassword" placeholder="New Password (max 20 chars)">
-        <button id="submitRegistration">Submit</button>
-        <button id="cancelRegistration">Cancel</button>
+        <button id="submitRegistration" onclick="submitRegistration()">Submit</button>
+        <button id="cancelRegistration" onclick="cancelRegistration()">Cancel</button>
     </div>
     <div id="map-container">
         <div id="map"></div>
-        <button id="toInfoScreen">Info</button>
+        <button id="toInfoScreen" onclick="showInfoScreen()">Info</button>
     </div>
     <div id="infoScreen">
         <h2>Weather Info</h2>
         <p id="weatherText"></p>
         <img id="weatherIcon" src="" alt="Weather Icon">
-        <span class="link" id="addToHome">Add to Home Screen</span>
-        <div class="backToMap" id="backToMap">Back to Map</div>
+        <span class="link" id="addToHome" onclick="addToHomeScreen()">Add to Home Screen</span>
+        <div class="backToMap" id="backToMap" onclick="showMap()">Back to Map</div>
     </div>
     <div id="chat">
         <div id="chatWindow"></div>
         <textarea id="chatInput" maxlength="100" placeholder="Type a message..."></textarea>
-        <button id="sendChat">Send</button>
-        <button id="endChat">End Chat</button>
+        <button id="sendChat" onclick="sendChatMessage()">Send</button>
+        <button id="endChat" onclick="endChat()">End Chat</button>
     </div>
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="app.js"></script>
