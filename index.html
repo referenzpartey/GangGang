@@ -9,6 +9,9 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
         #map { height: 100vh; }
+        #auth, #register { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        #auth input, #register input { margin: 10px; padding: 10px; font-size: 1rem; }
+        #auth button, #register button { padding: 10px 20px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -17,6 +20,14 @@
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <button id="login">Login</button>
+        <button id="registerButton">Register</button>
+    </div>
+    <div id="register" style="display:none;">
+        <h2>Register</h2>
+        <input type="text" id="newUsername" placeholder="New Username (max 10 chars)">
+        <input type="password" id="newPassword" placeholder="New Password (max 20 chars)">
+        <button id="submitRegistration">Register</button>
+        <button id="cancelRegistration">Cancel</button>
     </div>
     <div id="map" style="display:none;"></div>
     <script src="app.js"></script>
