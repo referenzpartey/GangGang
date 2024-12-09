@@ -5,31 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-Time Location App</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        body { margin: 0; font-family: 'Arial', sans-serif; background-color: #f4f4f9; color: #333; }
         #map { height: 100vh; }
-        #auth, #register { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        #auth input, #register input { margin: 10px; padding: 10px; font-size: 1rem; }
-        #auth button, #register button { padding: 10px 20px; font-size: 1rem; }
+        .container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        input, button { margin: 10px; padding: 10px 20px; font-size: 1rem; border: none; border-radius: 5px; }
+        input { width: 80%; max-width: 300px; border: 1px solid #ccc; }
+        button { background-color: #4CAF50; color: white; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        h2 { color: #444; }
     </style>
 </head>
 <body>
-    <div id="auth">
+    <div id="auth" class="container">
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <button id="login">Login</button>
-        <button id="registerButton">Register</button>
-    </div>
-    <div id="register" style="display:none;">
-        <h2>Register</h2>
-        <input type="text" id="newUsername" placeholder="New Username (max 10 chars)">
-        <input type="password" id="newPassword" placeholder="New Password (max 20 chars)">
-        <button id="submitRegistration">Register</button>
-        <button id="cancelRegistration">Cancel</button>
     </div>
     <div id="map" style="display:none;"></div>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
