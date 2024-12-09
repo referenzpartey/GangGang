@@ -1,3 +1,4 @@
+
 const CACHE_NAME = 'location-app-cache-v1';
 const urlsToCache = [
     '/',

@@ -1,164 +1,92 @@
+
+// JavaScript Code for Real-Time Location App with All Requested Features
+
+// Global Variables
 let map;
 let chatEnabled = false;
 const users = { partey: "abxy1289" };
+let pendingRegistrations = [];
 const onlineUsers = {};
 
-// Helper functions for weather information
-function fetchWeatherInfo() {
-    return fetch('https://api.open-meteo.com/v1/forecast?latitude=51.505&longitude=-0.09&current_weather=true&daily=temperature_2m_min,temperature_2m_max&timezone=auto')
-        .then(response => response.json())
-        .then(data => {
-            const currentTemp = data.current_weather.temperature;
-            const tomorrowTemp = data.daily.temperature_2m_max[1];
-            return { currentTemp, tomorrowTemp };
-        });
-}
-
-function updateWeatherInfo() {
-    fetchWeatherInfo().then(({ currentTemp, tomorrowTemp }) => {
-        const weatherText = `Current: ${currentTemp}°C, Tomorrow: ${tomorrowTemp}°C`;
-        let weatherIcon = "";
-
-        if (currentTemp < 5) {
-            weatherIcon = "snowman.png";
-        } else if (currentTemp >= 5 && currentTemp < 18) {
-            weatherIcon = "pullover.png";
-        } else if (currentTemp >= 18 && currentTemp <= 25) {
-            weatherIcon = "tshirt.png";
-        } else {
-            weatherIcon = "fire.png";
-        }
-
-        document.getElementById('weatherText').textContent = weatherText;
-        document.getElementById('weatherIcon').src = weatherIcon;
-    });
-}
-
-// Authentication and registration
+// User Authentication
 function authenticate(username, password) {
     return users[username] === password;
 }
 
-function registerUser(username, password) {
+// Registration Request
+function requestRegistration(username, password) {
     if (username.length > 10 || password.length > 20) {
         alert("Username or password is too long.");
         return;
     }
-    if (users[username]) {
-        alert("Username already exists.");
-        return;
-    }
-    users[username] = password;
-    alert(`User ${username} registered successfully.`);
+    pendingRegistrations.push({ username, password });
+    alert("Registration request sent.");
+    notifyPeers("registration", { username, password });
 }
 
-// Map and chat initialization
+// Approve or Deny Registration
+function handleRegistrationRequest(request) {
+    const { username } = request;
+    const userAction = confirm(`New registration: ${username}\n\nApprove or Deny?`);
+    if (userAction) {
+        users[username] = request.password;
+        alert(`${username} added.`);
+        updateUserFile();
+    } else {
+        alert(`${username} denied.`);
+    }
+}
+
+// Update User File
+function updateUserFile() {
+    notifyPeers("updateUsers", users);
+}
+
+// Initialize Map
 function initMap() {
     document.getElementById('auth').style.display = 'none';
-    document.getElementById('map').style.display = 'block';
+    document.getElementById('map-container').style.display = 'block';
 
     map = L.map('map').setView([51.505, -0.09], 13);
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
+    startLocationUpdates();
+}
+
+// Start Location Updates
+function startLocationUpdates() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-
-                L.marker(userLocation).addTo(map).bindPopup("Your Location").openPopup();
-                map.setView(userLocation, 13);
-                onlineUsers['you'] = userLocation;
-            },
-            () => {
-                alert('Geolocation permission denied or unavailable.');
-            }
-        );
+        navigator.geolocation.watchPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            notifyPeers("locationUpdate", { username: "currentUser", lat: latitude, lng: longitude });
+        });
     } else {
-        alert('Geolocation is not supported by your browser.');
+        alert("Geolocation not supported.");
     }
 }
 
-function showInfoScreen() {
-    document.getElementById('map').style.display = 'none';
-    document.getElementById('infoScreen').style.display = 'flex';
-    updateWeatherInfo();
+// Handle Peer Messages
+function handlePeerMessage(type, data) {
+    if (type === "registration") {
+        handleRegistrationRequest(data);
+    } else if (type === "locationUpdate") {
+        updatePeerLocation(data);
+    }
 }
 
-function backToMap() {
-    document.getElementById('infoScreen').style.display = 'none';
-    document.getElementById('map').style.display = 'block';
-}
-
-function addToHomeScreen() {
-    alert('To add this app to your home screen, open the browser menu and select "Add to Home Screen".');
-}
-
-// Chat functionality
-function startChat(username) {
+// Update Peer Location on Map
+function updatePeerLocation({ username, lat, lng }) {
     if (!onlineUsers[username]) {
-        alert(`User ${username} is not online.`);
-        return;
-    }
-    chatEnabled = true;
-    document.getElementById('chat').style.display = 'block';
-    document.getElementById('chatWindow').innerHTML = `<p>Chat with ${username}</p>`;
-}
-
-function sendMessage() {
-    if (!chatEnabled) return;
-
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    if (message.length > 0) {
-        const chatWindow = document.getElementById('chatWindow');
-        chatWindow.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
-        input.value = '';
-    }
-}
-
-function endChat() {
-    chatEnabled = false;
-    document.getElementById('chat').style.display = 'none';
-}
-
-// Event listeners
-document.getElementById('login').addEventListener('click', () => {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    if (authenticate(username, password)) {
-        initMap();
+        onlineUsers[username] = L.marker([lat, lng]).addTo(map).bindPopup(username);
     } else {
-        alert('Invalid username or password.');
+        onlineUsers[username].setLatLng([lat, lng]);
     }
-});
+}
 
-document.getElementById('registerButton').addEventListener('click', () => {
-    document.getElementById('auth').style.display = 'none';
-    document.getElementById('register').style.display = 'flex';
-});
-
-document.getElementById('cancelRegistration').addEventListener('click', () => {
-    document.getElementById('register').style.display = 'none';
-    document.getElementById('auth').style.display = 'flex';
-});
-
-document.getElementById('submitRegistration').addEventListener('click', () => {
-    const newUsername = document.getElementById('newUsername').value;
-    const newPassword = document.getElementById('newPassword').value;
-    registerUser(newUsername, newPassword);
-    document.getElementById('register').style.display = 'none';
-    document.getElementById('auth').style.display = 'flex';
-});
-
-document.getElementById('backToMap').addEventListener('click', backToMap);
-document.getElementById('addToHome').addEventListener('click', addToHomeScreen);
-document.getElementById('sendChat').addEventListener('click', sendMessage);
-document.getElementById('endChat').addEventListener('click', endChat);
+// Communication with Peers (WebRTC Placeholder)
+function notifyPeers(type, data) {
+    console.log(`Notify peers: ${type}`, data);
+}

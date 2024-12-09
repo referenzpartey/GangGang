@@ -1,20 +1,13 @@
+
 {
-  "name": "Real-Time Location App",
-  "short_name": "LocationApp",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#f4f4f9",
-  "theme_color": "#4CAF50",
-  "icons": [
-    {
-      "src": "icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+    "name": "Real-Time Location App",
+    "short_name": "LocationApp",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f4f4f9",
+    "theme_color": "#4CAF50",
+    "icons": [
+        { "src": "icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "icon-512x512.png", "sizes": "512x512", "type": "image/png" }
+    ]
 }
